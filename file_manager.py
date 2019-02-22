@@ -20,6 +20,7 @@ class file_manager(object):
         self.students_dict = None
         self.main_dir = None
         self.students = None
+        self.studentname_filename = None
 
     def get_dir(self):
         """Get the location of the current directory"""
@@ -34,8 +35,6 @@ class file_manager(object):
         main = os.path.abspath(self.path_to_gradebook)
         print (main)
         os.chdir(main)
-        #current_dir = os.getcwd()
-        #print (current_dir)
 
     def go_to_main(self):
         """Go to the main directory (file_manager)"""
@@ -74,7 +73,6 @@ class file_manager(object):
         """Create a dictionary with all the metadata about the students and stores this as a dataframe (class
         variable students"""
         problems_students = []
-        #self.go_to_gradebook()
         for i in range(len(self.text_files)):
             my_list = self.read_all_txt_files(i)
             naam_student = my_list[0]
@@ -100,6 +98,10 @@ class file_manager(object):
                 except IndexError:
                     self.students_dict["bestands_naam"].append("null")
                     problems_students.append(naam_student[6:-11])
+                try:
+                    self.students_dict["bestands_naam_full"].append(bestands_naam[15:])
+                except IndexError:
+                    self.students_dict["bestands_naam_full"].append("null")
                 self.students_dict["datum"].append(datum[14:-17])
                 try:
                     self.students_dict["q_nummer"].append(q_nummer[0][1:-1])
@@ -158,7 +160,7 @@ class file_manager(object):
                 with zipfile.ZipFile(file_name, 'r') as zip_ref:
                     try:
                         zip_ref.extractall(cwd + "/" + real_name)
-                    except zipfile.BadZipfile:
+                    except (zipfile.BadZipfile, zipfile.BadZipFile("File is not a zip file")):
                         bad_zips.append(file_name)
                         continue
                 os.remove(file_name)  # delete zipped file
@@ -177,30 +179,29 @@ class file_manager(object):
         self.go_to_main()
 
 
-    def rename_files(self):
+    def rename_folders(self):
         """Class method to rename all the files to the name of the student"""
-        #self.go_to_main()
-        #self.go_to_gradebook()
         for index, row in self.students.iterrows():
             bestands_naam = row["bestands_naam"]
             naam_student = row["naam_student"]
             filename = os.listdir (".")
             for my_file in filename:
-                print (my_file)
-                print (bestands_naam)
+                #print (my_file)
+                #print (bestands_naam)
                 if my_file == bestands_naam:
-                    print (my_file)
+                    #print (my_file)
                     current_dir = os.getcwd()
                     os.rename(my_file, current_dir + "/" + naam_student)
                 else:
-                    print ("file not found")
+                    pass
+                    #print ("file not found")
 
-    def rename_all_files(self):
+    def rename_all_folders(self):
         self.go_to_gradebook()
         self.get_all_txt_files()
         self.read_students_dict()
         self.create_metadata_dict()
-        self.rename_files()
+        self.rename_folders()
         self.go_to_main()
 
     def remove_txt_files(self):
@@ -213,6 +214,55 @@ class file_manager(object):
         for file in self.text_files:
             os.remove(file)
         self.go_to_main()
+
+
+    def make_key_value_pair(self):
+        """read the name of the student (first line) and name of the corresponding assignment (last line) and
+            store this in a dictionary (my_dict) as a key-value pair. """
+        self.studentname_filename = {}
+        for i in range(len(self.text_files)):
+            with open(self.text_files[i]) as file:
+                name_student = file.readline()  # read first line
+                name_student_short = name_student[6:]  # remove Naam:
+                name_student_strip = name_student_short.rstrip("\n")  # remove trailing white space
+            with open(self.text_files[i]) as file:
+                name_excel = file.readlines()[-2]  # read last line
+                name_excel_short = name_excel[15:]  # remove Document name:
+                name_excel_strip = name_excel_short.rstrip("\n")  # remove trailing white space
+            self.studentname_filename[name_excel_strip] = name_student_strip  # make key-value pair
+            print (self.studentname_filename)
+
+
+    def rename_files(self):
+        """rename all the files based on the extension provided
+        :var provide the file extension for isntance .docx or .xlsx"""
+        current_dir = os.getcwd()
+        for index, row in self.students.iterrows():
+            extension = row["extensie"]
+            bestandsnaam_full = row["bestands_naam_full"]
+            for item in self.studentname_filename:
+                if bestandsnaam_full == item:
+                     os.rename(item, current_dir + "/" + self.studentname_filename[item] + extension)
+
+
+    def rename_all_files(self):
+        self.go_to_gradebook()
+        self.get_all_txt_files()
+        self.read_students_dict()
+        self.make_key_value_pair()
+        self.create_metadata_dict()
+        self.rename_files()
+        self.go_to_main()
+
+
+    def get_file_extension(self):
+        self.go_to_gradebook()
+        self.get_all_txt_files()
+        self.read_students_dict()
+        self.create_metadata_dict()
+        extension = self.students["extensie"]
+        print (extension)
+        return extension
 
 
 

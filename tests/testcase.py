@@ -61,7 +61,7 @@ class manager_test(TestCase):
         self.file_manager.read_students_dict()
         self.file_manager.create_metadata_dict()
         #self.file_manager.create_csv_students()
-        self.file_manager.rename_files()
+        self.file_manager.rename_folders()
 
 
     def test_unzip_rename_files(self):
@@ -77,9 +77,23 @@ class manager_test(TestCase):
         self.file_manager.get_all_txt_files()
         self.file_manager.read_students_dict()
         self.file_manager.create_metadata_dict()
-        self.file_manager.rename_files()
+        self.file_manager.rename_folders()
 
 
 
     def test_remove_test_files(self):
         self.file_manager.remove_txt_files()
+
+
+    def test_rename_all_files(self):
+        self.file_manager.rename_all_files()
+
+    def test_get_file_extension(self):
+        self.file_manager.get_file_extension()
+
+    def test_key_value(self):
+        self.file_manager.go_to_gradebook()
+        self.file_manager.get_all_txt_files()
+        self.file_manager.make_key_value_pair()
+
+

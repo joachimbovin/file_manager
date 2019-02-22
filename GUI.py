@@ -33,38 +33,64 @@ def instructions_button():
     
     1. Rename the folder containing your files to "gradebook" and place it in the folder file_manager. This folder should also
      contain file_manager.py and GUI.py
-    2. That's it :)"""
+    2. That's it :)
+    
+    File manager has the following functions: 
+    
+    1. Create CSV: 
+    Reads the metadata from the .txt files and creates a CSV (comma separated values) file in the gradebook folder with an overview 
+    of relevant metadata. 
+    
+    2. Rename All Files
+    Renames all the files to: 'student name (q-number)'. Use this to rename word documents, spreadsheets, etc...
+    
+    3. Unzip All Files
+     Unzips all the files in the directory gradebook to a new folder with the same name and deletes the .zip files.
+     
+    4. Rename all folders
+     Use this function to rename all the folders created with the "Unzip All Files" function.
+     
+     5. Remove .txt files
+      Use this function to remove all the .txt files 
+      WARNING: This action permanently removes the files from your hard drive
+     """
                         )
 
 instructions = tkinter.Button(top, text ="Instructions", command = instructions_button)
 
 about = tkinter.Button(top, text ="About", command = about_file_manager)
 
-B = tkinter.Button(top, text ="Create CSV", command = file_manager.create_csv)
+create_csv_button = tkinter.Button(top, text ="Create CSV", command = file_manager.create_csv)
 
 C = tkinter.Button(top, text="Show current directory", command = show_directory)
 
-A = tkinter.Button(top, text ="Unzip all files", command = file_manager.unzip_all_files)
+unzip_button = tkinter.Button(top, text ="Unzip all files", command = file_manager.unzip_all_files)
 
-D = tkinter.Button(top, text ="Rename all files", command = file_manager.rename_all_files)
+rename_folders_button = tkinter.Button(top, text ="Rename all folders", command = file_manager.rename_all_folders)
+
+rename_files_button = tkinter.Button(top, text ="Rename all files", command = file_manager.rename_all_files)
 
 remove_txt = tkinter.Button(top, text ="Remove all .txt files", command = file_manager.remove_txt_files)
 
-E = tkinter.Button(top, text ="Close File Manager", command = close_window)
+close_button = tkinter.Button(top, text ="Close File Manager", command = close_window)
 
 
 
-top.geometry("500x250")
+top.geometry("550x300")
 top.configure(background="white")
+
+
+
 
 #C.pack()
 instructions.pack()
-B.pack()
-A.pack()
-D.pack()
+create_csv_button.pack()
+rename_files_button.pack()
+unzip_button.pack()
+rename_folders_button.pack()
 remove_txt.pack()
 about.pack()
-E.pack()
+close_button.pack()
 
 # Code to add widgets will go here...
 top.mainloop()
